@@ -1,0 +1,135 @@
+<!-- Content Header (Page header) -->
+<section class="content-header">
+        <h1>
+            用户管理   
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i> 系统管理</a></li>
+            <li class="active">用户管理</li>
+        </ol>
+  </section>
+
+  <!-- Main content -->
+  <section class="content container-fluid">
+    <div class="box">
+        <div class="box-header with-border">
+          <Button onclick="add()" class="btn btn-primary">添加</Button>
+          <Button onclick="dakai()" class="btn btn-primary">dakai</Button>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+          <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th style="width: 10px">#</th>
+                <th>名称</th>
+                <th>Progress</th>
+                <th style="width: 40px">Label</th>
+            </tr>
+            </thead>
+            <tbody>
+                {{range .role_list}}
+                    <tr>
+                        <td>{{.Id}}</td>
+                        <td>{{.Name}}</td>
+                        <td>
+                            <div class="progress progress-xs">
+                            <div class="progress-bar progress-bar-danger" style="width: 55%"></div>
+                            </div>
+                        </td>
+                        <td><span class="badge bg-red">55%</span></td>
+                    </tr>
+                {{end}}
+            </tbody>
+          </table>
+        </div>
+        <!-- /.box-body -->
+        <div class="box-footer clearfix">
+          <ul class="pagination pagination-sm no-margin pull-right">
+            {{str2html .pagebar}}
+          </ul>
+        </div>
+      </div>
+  
+
+  </section>
+  <!-- /.content -->
+  <!-- 模态框（Modal） -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    添加/编辑角色
+                </h4>
+            </div>
+            <div class="modal-body form-horizontal">
+                <div class="col-sm-7 col-sm-offset-3" id="error_msg" style="color:red;margin-bottom:8px"></div>
+                <input type="text" id="id" style="display:none;">
+                <div class="form-group">
+                    <label for="name" class="col-sm-3 control-label">角色名称</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" id="name" placeholder="请输入角色名称">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="desc" class="col-sm-3 control-label">角色描述</label>
+                    <div class="col-sm-7">
+                        <textarea id="desc" class="form-control" rows="3"></textarea>
+                    </div>
+                </div>
+            
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                </button>
+                <button type="button" id="sub" class="btn btn-primary">
+                    确定
+                </button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+<script>
+    let add = function(){
+        // alertMsg("添加成功","success");
+        $('#myModal').modal('show');
+    }
+
+    $('#sub').click(function(){
+        let self = this;
+        $(this).attr('disabled',true);
+        let id = $('#id').val();
+        let name = $('#name').val();
+        let desc = $('#desc').val();
+        $.ajax({
+            url:"/role/save",
+            method:"post",
+            dataType:"json",
+            data:{id:id,name:name,desc:desc},
+            success:function(res){
+                if(res.code == 200){
+                    $('#myModal').modal('hide');
+                    alertMsg(res.msg,"success");
+                    setTimeout(function(){window.location.href=''},2000)
+                }else{
+                    $(self).attr('disabled',false);
+                    $("#error_msg").html(res.msg);
+                }
+            },
+            error:function(){
+                $(self).attr('disabled',false);
+                alert("操作失败","danger");
+            }
+        });
+    })
+
+    
+    let dakai = function(){
+        alertMsg("添加失败","danger");
+    }
+    
+</script>
